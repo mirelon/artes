@@ -34,8 +34,16 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
   }
 
   const handleContinueClick = () => {
-    updateResults(currentResults.map((result) => (result === '' ? 'OK' : result)))
-    setTimeout(onNextWord, 1000)
+    let somethingChanged = false
+    updateResults(currentResults.map((result) => {
+      if (result === '') {
+        somethingChanged = true
+        return 'OK'
+      } else {
+        return result
+      }
+    }))
+    setTimeout(onNextWord, somethingChanged ? 1000 : 0)
   }
 
   return (

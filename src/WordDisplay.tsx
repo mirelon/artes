@@ -9,8 +9,14 @@ type WordDisplayProps = {
   boxSize: number
 }
 
-const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsInLocalStorage, onNextWord, boxSize}) => {
+const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsInLocalStorage, onNextWord: onNextWordOuter, boxSize}) => {
   const [currentResults, setCurrentResults] = useState<string[]>(results)
+  const [nextButtonDisabled, setNextButtonDisabled] = useState<boolean>(false)
+
+  const onNextWord = () => {
+    setNextButtonDisabled(false)
+    onNextWordOuter()
+  }
 
   // Sync currentResults with updated results whenever `results` changes (e.g., new word)
   useEffect(() => {
@@ -30,6 +36,7 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
 
   const handleOKClick = () => {
     updateResults(Array.from({length: word.length}, () => 'OK'))
+    setNextButtonDisabled(true)
     setTimeout(onNextWord, 1000)
   }
 
@@ -43,6 +50,7 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
         return result
       }
     }))
+    setNextButtonDisabled(true)
     setTimeout(onNextWord, somethingChanged ? 1000 : 0)
   }
 
@@ -61,8 +69,8 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
         ))}
       </div>
       {currentResults?.some(result => result)
-        ? <button onClick={handleContinueClick}>Continue</button>
-        : <button onClick={handleOKClick}>OK</button>
+        ? <button onClick={handleContinueClick} disabled={nextButtonDisabled}>Continue</button>
+        : <button onClick={handleOKClick} disabled={nextButtonDisabled}>OK</button>
       }
     </div>
   )

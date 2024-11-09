@@ -26,7 +26,7 @@ const CharacterBox: React.FC<CharacterBoxProps> = ({character, status, onStatusU
   const colors = getColor(status)
 
   return (
-    <div>
+    <div className="char-box-container">
       <div className="char-box" style={{
         backgroundColor: colors.background,
         width: boxSize,
@@ -35,12 +35,16 @@ const CharacterBox: React.FC<CharacterBoxProps> = ({character, status, onStatusU
       }}>
         {character}
       </div>
-      <div>
+      <div className="status-buttons">
         {['NZ', 'D', 'A'].map((label) => (
           <button
             key={label}
             onClick={() => onStatusUpdate(label)}
-            style={{backgroundColor: colors.buttonColor}}
+            style={{
+              backgroundColor: colors.buttonColor,
+              width: boxSize,
+              margin: '4px 0' // Adds spacing between buttons
+            }}
           >
             {label}
           </button>

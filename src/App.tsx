@@ -6,7 +6,7 @@ import ResultsDisplay from './ResultsDisplay.tsx'
 
 // Load words from words.txt file in the public folder
 const fetchWordList = async () => {
-  const response = await fetch('words.txt')
+  const response = await fetch(`${import.meta.env.BASE_URL}/words.txt`)
   const text = await response.text()
   return text.split('\n').map((word) => word.trim()).filter(Boolean)
 }

@@ -3,16 +3,13 @@ import './App.css'
 import {initialResult, initialResults, Results} from './results.ts'
 import WordDisplay from './WordDisplay.tsx'
 import ResultsDisplay from './ResultsDisplay.tsx'
-
-// Load words from words.txt file in the public folder
-const fetchWordList = async () => {
-  const response = await fetch(`${import.meta.env.BASE_URL}/words.txt`)
-  const text = await response.text()
-  return text.split('\n').map((word) => word.trim()).filter(Boolean)
-}
+import {Word} from './phonemes.ts'
+import {fetchWordList} from './helpers.ts'
 
 const App: React.FC = () => {
-  const [words, setWords] = useState<string[]>([])
+  const [words, setWords] = useState<Word[]>([])
+  const [isLoadingWords, setIsLoadingWords] = useState(true)
+  const [errorLoadingWords, setErrorLoadingWords] = useState<string | null>(null)
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [maxWordLength, setMaxWordLength] = useState(1)
   const [results, setResults] = useState<Results>({})
@@ -21,9 +18,15 @@ const App: React.FC = () => {
   // Fetch the words on initial load
   useEffect(() => {
     const loadWords = async () => {
-      const loadedWords = await fetchWordList()
-      setWords(loadedWords)
-      setMaxWordLength(Math.max(...loadedWords.map((word) => word.length)))
+      try {
+        const loadedWords = await fetchWordList()
+        setWords(loadedWords)
+        setMaxWordLength(Math.max(...loadedWords.map((word) => word.phonemes.length)))
+      } catch (e: any) {
+        setErrorLoadingWords(`When loading words: ${e.message}`)
+      } finally {
+        setIsLoadingWords(false)
+      }
     }
     loadWords()
   }, [])
@@ -59,23 +62,27 @@ const App: React.FC = () => {
   }, [words.length])
 
   // Calculate box size and gap dynamically based on screen width and word length
-  const currentWord = words[currentWordIndex] || ''
+  const currentWord = words[currentWordIndex] || []
   const boxSize = 0.6 * window.innerWidth / maxWordLength
 
-  const updateResultsInLocalStorage = (word: string) => (wordResults: string[]) => {
-    const newResults = {...results, [word]: wordResults}
+  const updateResultsInLocalStorage = (word: Word) => (wordResults: string[]) => {
+    const newResults = {...results, [word.raw]: wordResults}
     setResults(newResults)
     localStorage.setItem('speechResults', JSON.stringify(newResults))
   }
 
   return (
     <div className="container">
-      {showResults ? (
+      {isLoadingWords ? (
+        <div>Loading words...</div>
+      ) : errorLoadingWords ? (
+        <div>Error: {errorLoadingWords}</div>
+      ) : showResults ? (
         <ResultsDisplay results={results}/>
       ) : (
         <WordDisplay
           word={currentWord}
-          results={results[currentWord] ?? initialResult(currentWord)}
+          results={results[currentWord.raw] ?? initialResult(currentWord)}
           updateResultsInLocalStorage={updateResultsInLocalStorage(currentWord)}
           onNextWord={handleNextWord}
           boxSize={boxSize}

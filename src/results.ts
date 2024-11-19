@@ -1,7 +1,9 @@
-export type Results = { [word: string]: string[] }
+import {Word} from './phonemes'
 
-export const initialResult = (word: string) =>
-  Array.from({length: word.length}, () => '') // Initialize with empty strings
+export type Results = { [raw: string]: string[] }
 
-export const initialResults = (words: string[]) =>
+export const initialResult = (word: Word) =>
+  Array.from({length: word.phonemes.length}, () => '') // Initialize with empty strings
+
+export const initialResults = (words: Word[]) =>
   Object.fromEntries(words.map(word => [word, initialResult(word)]))

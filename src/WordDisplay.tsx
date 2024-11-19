@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import CharacterBox from './CharacterBox'
+import PhonemeBox from './PhonemeBox.tsx'
+import {Word} from './phonemes.ts'
 
 type WordDisplayProps = {
-  word: string
+  word: Word
   results: string[]
   updateResultsInLocalStorage: (results: string[]) => void
   onNextWord: () => void
@@ -28,14 +29,14 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
     updateResultsInLocalStorage(newResults)
   }
 
-  const handleCharacterUpdate = (index: number, status: string) => {
+  const handlePhonemeUpdate = (index: number, status: string) => {
     const newResults = [...currentResults]
     newResults[index] = status
     updateResults(newResults)
   }
 
   const handleOKClick = () => {
-    updateResults(Array.from({length: word.length}, () => 'OK'))
+    updateResults(Array.from({length: word.phonemes.length}, () => 'OK'))
     setNextButtonDisabled(true)
     setTimeout(onNextWord, 1000)
   }
@@ -56,14 +57,13 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
 
   return (
     <div>
-      <h2>{word}</h2>
       <div className="word-container" style={{gap: boxSize / 2}}>
-        {word.split('').map((char, index) => (
-          <CharacterBox
-            key={`${word}-${index}`}
-            character={char}
+        {word.phonemes.map((phoneme, index) => (
+          <PhonemeBox
+            key={`${word.raw}-${index}`}
+            phoneme={phoneme}
             status={currentResults?.[index]}
-            onStatusUpdate={(status) => handleCharacterUpdate(index, status)}
+            onStatusUpdate={(status) => handlePhonemeUpdate(index, status)}
             boxSize={boxSize}
           />
         ))}

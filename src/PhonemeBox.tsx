@@ -1,13 +1,14 @@
 import React from 'react'
+import {Phoneme} from "./phonemes.ts";
 
-type CharacterBoxProps = {
-  character: string
+type PhonemeBoxProps = {
+  phoneme: Phoneme
   status: string
   onStatusUpdate: (status: string) => void
   boxSize: number
 }
 
-const CharacterBox: React.FC<CharacterBoxProps> = ({character, status, onStatusUpdate, boxSize}) => {
+const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate, boxSize}) => {
   const getColor = (status: string) => {
     switch (status) {
       case "OK":
@@ -33,7 +34,7 @@ const CharacterBox: React.FC<CharacterBoxProps> = ({character, status, onStatusU
         height: boxSize,
         borderRadius: `${boxSize / 10}px`
       }}>
-        {character}
+        {phoneme}
       </div>
       <div className="status-buttons">
         {['NZ', 'D', 'A'].map((label) => (
@@ -54,4 +55,4 @@ const CharacterBox: React.FC<CharacterBoxProps> = ({character, status, onStatusU
   )
 }
 
-export default CharacterBox
+export default PhonemeBox

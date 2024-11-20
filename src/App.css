@@ -30,13 +30,13 @@ html, body {
     width: fit-content; /* Only take up the necessary width */
 }
 
-.char-box-container {
+.phoneme-box-container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.char-box {
+.phoneme-box {
     margin-bottom: 8px; /* Space between character box and buttons */
     color: #000000; /* Black color for the character */
     text-transform: uppercase; /* Convert character to uppercase */
@@ -45,15 +45,16 @@ html, body {
     justify-content: center;
     font-weight: bold;
     font-size: calc(2vw + 2em); /* Responsive font size */
+    cursor: pointer;
 }
 
-.status-buttons {
+.phoneme-status-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.status-buttons button {
+.phoneme-status-buttons button {
     color: #000000; /* Black text color for buttons */
     padding: 0.5em 0em;
     font-weight: bold; /* Optional: make text bold */

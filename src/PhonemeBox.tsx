@@ -27,8 +27,8 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate,
   const colors = getColor(status)
 
   return (
-    <div className="char-box-container">
-      <div className="char-box" style={{
+    <div className="phoneme-box-container">
+      <div className="phoneme-box" style={{
         backgroundColor: colors.background,
         width: boxSize,
         height: boxSize,
@@ -36,7 +36,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate,
       }}>
         {phoneme}
       </div>
-      <div className="status-buttons">
+      <div className="phoneme-status-buttons">
         {['NZ', 'D', 'A'].map((label) => (
           <button
             key={label}

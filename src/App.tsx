@@ -33,7 +33,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      setResults(JSON.parse(localStorage.getItem('speechResults') ?? ''))
+      setResults(JSON.parse(localStorage.getItem('speechResults') ?? '{}'))
     } catch {
       setResults(initialResults(words))
       localStorage.setItem('speechResults', JSON.stringify(initialResults))

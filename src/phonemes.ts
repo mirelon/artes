@@ -54,3 +54,15 @@ const applyAssimilations = (phonemes: Phoneme[], isWhole: boolean): Phoneme[] =>
 export const toWord = (raw: string): Word => {
   return {raw, phonemes: applyAssimilations(toPhonemes(raw.replace(/\s+/g, '')), true).map(yToI)}
 }
+
+export const isVocal = (phoneme: Phoneme) => ['a', 'á', 'ä', 'e', 'é', 'i', 'í', 'o', 'ó', 'u', 'ú'].includes(phoneme)
+
+const isDiphtong = (phoneme: Phoneme) => ['ia', 'ie', 'iu', 'ô'].includes(phoneme)
+
+export const isConsonant = (phoneme: Phoneme) => !isVocal(phoneme) && !isDiphtong(phoneme)
+
+export const consonantsCount = (raw: string) => toWord(raw).phonemes.filter((phoneme) => isConsonant(phoneme)).length
+
+export const vocalsCount = (raw: string) => toWord(raw).phonemes.filter((phoneme) => isVocal(phoneme)).length
+
+export const phonemesCount = (raw: string) => toWord(raw).phonemes.length

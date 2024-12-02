@@ -65,3 +65,25 @@ button {
     padding: 0.5em 1em;
     background-color: aqua;
 }
+
+.results table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.results table th, .results table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.results table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.results span.variable-label {
+    font-weight: bold;
+}

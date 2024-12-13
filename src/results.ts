@@ -1,4 +1,6 @@
 import {sum} from 'lodash'
+
+import {limitedZip} from './helpers.ts'
 import {
   consonantsCount,
   diphthongsCount,
@@ -9,7 +11,6 @@ import {
   vocalsCount,
   Word
 } from './phonemes'
-import {limitedZip} from './helpers.ts'
 
 export type Results = { [raw: string]: string[] }
 

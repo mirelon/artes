@@ -1,4 +1,5 @@
 import {zip} from 'lodash'
+
 import {toWord, Word} from './phonemes.ts'
 
 // Load words from words.txt file in the public folder

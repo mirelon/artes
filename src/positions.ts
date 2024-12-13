@@ -1,8 +1,10 @@
-import {isConsonant, isDiphthong, isVocal, Phoneme, toWord} from './phonemes.ts'
-import {assertSameLength, Results} from './results.ts'
-import {limitedZip} from './helpers.ts'
 import {isNumber} from "lodash";
 
+import {limitedZip} from './helpers.ts'
+import {isConsonant, isDiphthong, isVocal, Phoneme, toWord} from './phonemes.ts'
+import {assertSameLength, Results} from './results.ts'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const positions = ['I', 'M', 'F']
 
 export type Position = (typeof positions)[number]

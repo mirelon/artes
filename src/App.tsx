@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react'
+
 import './App.css'
-import {initialResult, initialResults, Results} from './results.ts'
-import WordDisplay from './WordDisplay.tsx'
-import ResultsDisplay from './ResultsDisplay.tsx'
-import {Word} from './phonemes.ts'
 import {fetchWordList} from './helpers.ts'
+import {Word} from './phonemes.ts'
+import {initialResult, initialResults, Results} from './results.ts'
+import ResultsDisplay from './ResultsDisplay.tsx'
+import WordDisplay from './WordDisplay.tsx'
 
 const App: React.FC = () => {
   const [words, setWords] = useState<Word[]>([])
@@ -22,8 +23,9 @@ const App: React.FC = () => {
         const loadedWords = await fetchWordList()
         setWords(loadedWords)
         setMaxWordLength(Math.max(...loadedWords.map((word) => word.phonemes.length)))
-      } catch (e: any) {
-        setErrorLoadingWords(`When loading words: ${e.message}`)
+      } catch (e: unknown) {
+        if (e instanceof Error) setErrorLoadingWords(`When loading words: ${e.message}`)
+        else setErrorLoadingWords(`When loading words: ${JSON.stringify(e)}`)
       } finally {
         setIsLoadingWords(false)
       }

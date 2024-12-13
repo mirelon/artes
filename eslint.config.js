@@ -3,6 +3,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
+import importPlugin from 'eslint-plugin-import'
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -14,6 +15,7 @@ export default tseslint.config(
       globals: globals.browser,
     },
     plugins: {
+      'import': importPlugin,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
@@ -26,6 +28,29 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'import/order': [
+        'warn',
+        {
+          groups: [
+            ['builtin', 'external'], // Node.js and external packages
+            ['internal'], // Internal modules
+            ['parent', 'sibling', 'index'], // Parent, sibling, and index files
+          ],
+          pathGroups: [
+            {
+              pattern: '@/**', // Example alias for internal imports
+              group: 'internal',
+              position: 'before',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          alphabetize: {
+            order: 'asc', // Sort imports alphabetically
+            caseInsensitive: true,
+          },
+          'newlines-between': 'always', // Add empty lines between groups
+        },
       ],
     },
   },

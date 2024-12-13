@@ -5,10 +5,19 @@ import {
   correctVocalsCount,
   Results,
   totalConsonantsCount,
+  totalDiphthongsCount,
   totalPhonemesCount,
   totalVocalsCount
 } from './results.ts'
 import {formatPercentage} from './helpers.ts'
+import {
+  consonantsCorrectInAllPositionsCount,
+  consonantsWithStatus,
+  consonantsWithStatusCount,
+  diphthongsWithStatusCount,
+  nonConstantConsonantsCount,
+  vocalsWithStatusCount
+} from './positions.ts'
 
 interface ResultsDisplayProps {
   results: Results
@@ -60,7 +69,37 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({results}) => {
       <span className="variable-label"
             title="Správne vyslovené fonémy / cieľové fonémy">SVF</span>: {totalPhonemesCount(results) > 0 ? formatPercentage(correctPhonemesCount(results) / totalPhonemesCount(results)) : '-'}
       <br/>
-      <h3>Detailné výsledky podľa slov:</h3>
+
+      <h3>Fonetický repertoár</h3>
+      <table>
+        <tr title="Konzonanty vyslovené na každej testovanej pozícii aspoň raz správne vyslovené">
+          <td>Počet konsonantov produkovaných vo všetkých pozíciách správne</td>
+          <td>{consonantsCorrectInAllPositionsCount(results)} / {totalConsonantsCount(results)}</td>
+        </tr>
+        <tr
+          title="Nekonštantne = na ľubovoľnej pozícii aspoň 1 správne a aspoň 1 nesprávne (distorzne, nezrelo alebo absent.)">
+          <td>Počet konsonantov produkovaných nekonštantne</td>
+          <td>{nonConstantConsonantsCount(results)} / {totalConsonantsCount(results)}</td>
+        </tr>
+        <tr title="Konzonanty vyslovené aspoň raz na aspoň jednej pozícii nezrelo">
+          <td>Počet konsonantov produkovaných nezrelo</td>
+          <td>{consonantsWithStatusCount(results, 'N')} / {totalConsonantsCount(results)}</td>
+        </tr>
+        <tr title="Konzonanty vyslovené aspoň raz na aspoň jednej pozícii distorzne">
+          <td>Počet konsonantov produkovaných distorzne</td>
+          <td>{consonantsWithStatusCount(results, 'D')} / {totalConsonantsCount(results)}</td>
+        </tr>
+        <tr title="Konzonanty absentujúce aspoň raz na aspoň jednej pozícii">
+          <td>Počet konsonantov absentuje / vypíšte</td>
+          <td>{consonantsWithStatusCount(results, 'A')} / {totalConsonantsCount(results)}{consonantsWithStatusCount(results, 'A') > 0 ? `: ${consonantsWithStatus(results, 'A')}` : ''}</td>
+        </tr>
+        <tr title="Vokály / diftongy absentujúce aspoň raz na aspoň jednej pozícii">
+          <td>Absencia vokálov / diftongov</td>
+          <td>{vocalsWithStatusCount(results, 'A')} / {totalVocalsCount(results)}, {diphthongsWithStatusCount(results, 'A')} / {totalDiphthongsCount(results)}</td>
+        </tr>
+      </table>
+      <br/>
+      <h3>Detailné výsledky podľa slov</h3>
       {Object.entries(results).map(([word, statuses]) => (
         <div key={word}>
           <span className="variable-label">{word}</span>

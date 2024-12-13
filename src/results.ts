@@ -1,6 +1,15 @@
 import {sum} from 'lodash'
-import {consonantsCount, isConsonant, isVocal, phonemesCount, toWord, vocalsCount, Word} from './phonemes'
-import {limitedZip} from "./helpers.ts";
+import {
+  consonantsCount,
+  diphthongsCount,
+  isConsonant,
+  isVocal,
+  phonemesCount,
+  toWord,
+  vocalsCount,
+  Word
+} from './phonemes'
+import {limitedZip} from './helpers.ts'
 
 export type Results = { [raw: string]: string[] }
 
@@ -14,12 +23,13 @@ export const totalConsonantsCount = (results: Results) => sum(Object.keys(result
 
 export const totalVocalsCount = (results: Results) => sum(Object.keys(results).map(vocalsCount))
 
+export const totalDiphthongsCount = (results: Results) => sum(Object.keys(results).map(diphthongsCount))
+
 export const totalPhonemesCount = (results: Results) => sum(Object.keys(results).map(phonemesCount))
 
-const assertSameLength = (statuses: string[], word: Word) => {
+export const assertSameLength = (statuses: string[], word: Word) => {
   if (statuses.length != word.phonemes.length) throw new Error(`Result statuses length does not match the phoneme count for ${word.raw}: ${statuses.length} != ${word.phonemes.length}`)
 }
-
 
 export const correctConsonantsCount = (results: Results) => sum(Object.entries(results).map(([raw, statuses]) => {
   const word = toWord(raw)

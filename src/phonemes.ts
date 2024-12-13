@@ -57,12 +57,14 @@ export const toWord = (raw: string): Word => {
 
 export const isVocal = (phoneme: Phoneme) => ['a', 'á', 'ä', 'e', 'é', 'i', 'í', 'o', 'ó', 'u', 'ú'].includes(phoneme)
 
-const isDiphtong = (phoneme: Phoneme) => ['ia', 'ie', 'iu', 'ô'].includes(phoneme)
+export const isDiphthong = (phoneme: Phoneme) => ['ia', 'ie', 'iu', 'ô'].includes(phoneme)
 
-export const isConsonant = (phoneme: Phoneme) => !isVocal(phoneme) && !isDiphtong(phoneme)
+export const isConsonant = (phoneme: Phoneme) => !isVocal(phoneme) && !isDiphthong(phoneme)
 
 export const consonantsCount = (raw: string) => toWord(raw).phonemes.filter((phoneme) => isConsonant(phoneme)).length
 
 export const vocalsCount = (raw: string) => toWord(raw).phonemes.filter((phoneme) => isVocal(phoneme)).length
+
+export const diphthongsCount = (raw: string) => toWord(raw).phonemes.filter((phoneme) => isDiphthong(phoneme)).length
 
 export const phonemesCount = (raw: string) => toWord(raw).phonemes.length

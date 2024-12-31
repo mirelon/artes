@@ -62,6 +62,10 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
     setIsEditing(false)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleBlur()
+  }
+
   const colors = getColor(phonemeResult)
 
   return (
@@ -79,6 +83,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
             value={displayedPhoneme}
             onChange={handleInputChange}
             onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
             className="phoneme-input"
           />
         ) : (

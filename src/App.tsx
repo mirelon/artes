@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react'
-
+import React, {useCallback, useEffect, useState} from 'react'
 import './App.css'
+import {useSwipeable} from 'react-swipeable'
+
 import {fetchWordList} from './helpers.ts'
 import {Word} from './phonemes.ts'
 import {initialResult, initialResults, PhonemeResult, Results} from './results.ts'
@@ -15,6 +16,22 @@ const App: React.FC = () => {
   const [maxWordLength, setMaxWordLength] = useState(1)
   const [results, setResults] = useState<Results>({})
   const [showResults, setShowResults] = useState(false)
+
+  const cycleNextWord = useCallback(() => {
+    setCurrentWordIndex((prev) => (prev + 1) % words.length)
+  }, [words.length])
+
+  const cyclePreviousWord = useCallback(() => {
+    setCurrentWordIndex((prev) => (prev - 1 + words.length) % words.length)
+  }, [words.length])
+
+  const handleNextWord = () => {
+    if (currentWordIndex < words.length - 1) {
+      cycleNextWord()
+    } else {
+      setShowResults(true)
+    }
+  }
 
   // Fetch the words on initial load
   useEffect(() => {
@@ -42,26 +59,20 @@ const App: React.FC = () => {
     }
   }, [words])
 
-  const handleNextWord = () => {
-    if (currentWordIndex < words.length - 1) {
-      setCurrentWordIndex(currentWordIndex + 1)
-    } else {
-      setShowResults(true)
-    }
-  }
-
-  // Change the current word based on arrow key press
+  // Handle arrow keys and Escape
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
-        setCurrentWordIndex((prev) => (prev + 1) % words.length)
+        cycleNextWord()
       } else if (event.key === 'ArrowLeft') {
-        setCurrentWordIndex((prev) => (prev - 1 + words.length) % words.length)
+        cyclePreviousWord()
+      } else if (event.key === 'Escape') {
+        setShowResults((prev) => !prev)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [words.length])
+  }, [cycleNextWord, cyclePreviousWord])
 
   // Calculate box size and gap dynamically based on screen width and word length
   const currentWord = words[currentWordIndex] || []
@@ -73,8 +84,14 @@ const App: React.FC = () => {
     localStorage.setItem('speechResults', JSON.stringify(newResults))
   }
 
+  const handlers = useSwipeable({
+    onSwipedLeft: cycleNextWord,
+    onSwipedRight: cyclePreviousWord,
+    preventScrollOnSwipe: true,
+  })
+
   return (
-    <div className="container">
+    <div {...handlers} className="container">
       {isLoadingWords ? (
         <div>Loading words...</div>
       ) : errorLoadingWords ? (

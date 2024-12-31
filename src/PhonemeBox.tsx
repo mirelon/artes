@@ -20,8 +20,9 @@ const phonemeStatusButtonLabels: [PhonemeStatus, string][] = [
 const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResultUpdate, boxSize}) => {
 
   const [isEditing, setIsEditing] = useState(false)
-  const [currentPhoneme, setCurrentPhoneme] = useState(phoneme)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const displayedPhoneme = typeof phonemeResult === 'string' ? phonemeResult : phoneme
 
   const getColor = (phonemeResult: PhonemeResult) => {
     switch (phonemeResult) {
@@ -33,8 +34,10 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
         return {background: "#fd7e14", buttonColor: "#f9c6a1"}
       case PhonemeStatus.ABSENT:
         return {background: "#6c757d", buttonColor: "#d6d8db"}
-      default:
+      case null:
         return {background: "#d4edda", buttonColor: "#d4edda"}
+      default:
+        return {background: "#ba68c8", buttonColor: "#e1bee7"}
     }
   }
 
@@ -51,7 +54,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase() // Convert to uppercase
     if (/^[A-ZÁÄČĎÉÍĽŇÓÔŔŠŤÚÝŽ]*$/.test(value)) {
-      setCurrentPhoneme(value) // Allow only alphabet characters, including Slovak ones
+      onResultUpdate(value) // Allow only alphabet characters, including Slovak ones
     }
   }
 
@@ -73,13 +76,13 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
           <input
             ref={inputRef}
             type="text"
-            value={currentPhoneme}
+            value={displayedPhoneme}
             onChange={handleInputChange}
             onBlur={handleBlur}
             className="phoneme-input"
           />
         ) : (
-          currentPhoneme
+          displayedPhoneme
         )}
       </div>
       <div className="phoneme-status-buttons">

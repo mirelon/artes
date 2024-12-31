@@ -1,8 +1,8 @@
-import {isNumber} from "lodash";
+import {isNumber} from 'lodash'
 
 import {limitedZip} from './helpers.ts'
 import {isConsonant, isDiphthong, isVocal, Phoneme, toWord} from './phonemes.ts'
-import {assertSameLength, Results} from './results.ts'
+import {assertSameLength, PhonemeStatus, Results} from './results.ts'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const positions = ['I', 'M', 'F']
@@ -13,7 +13,9 @@ type ResultsPerPosition = Record<Position, { correct: number, tested: number }>
 
 type ResultsPerPhonemePosition = Record<Phoneme, ResultsPerPosition>
 
-type ResultsPerPhoneme = Record<Phoneme, Record<string, number>>
+type PhonemeResultKey = PhonemeStatus | 'all'
+
+type ResultsPerPhoneme = Record<Phoneme, Record<PhonemeResultKey, number>>
 
 const calculateResultsPerPhonemePosition = (results: Results) => {
   const resultsPerPhonemePosition: ResultsPerPhonemePosition = {}
@@ -27,7 +29,7 @@ const calculateResultsPerPhonemePosition = (results: Results) => {
         correct: 0,
         tested: 0
       }
-      resultsPerPhonemePosition[phoneme][position].correct += status === 'OK' ? 1 : 0
+      resultsPerPhonemePosition[phoneme][position].correct += status === PhonemeStatus.OK ? 1 : 0
       resultsPerPhonemePosition[phoneme][position].tested += 1
     })
   })
@@ -37,21 +39,23 @@ const calculateResultsPerPhonemePosition = (results: Results) => {
 
 const calculateStatusResultsPerPhoneme = (results: Results) => {
   const resultsPerPhoneme: ResultsPerPhoneme = {}
-  Object.entries(results).forEach(([raw, statuses]) => {
+  Object.entries(results).forEach(([raw, phonemeResults]) => {
     const word = toWord(raw)
-    assertSameLength(statuses, word)
-    limitedZip(word.phonemes, statuses).forEach(([phoneme, status]) => {
+    assertSameLength(phonemeResults, word)
+    limitedZip(word.phonemes, phonemeResults).forEach(([phoneme, phonemeResult]) => {
       if (!resultsPerPhoneme[phoneme]) resultsPerPhoneme[phoneme] = {
-        OK: 0,
-        NZ: 0,
-        D: 0,
-        A: 0,
+        [PhonemeStatus.OK]: 0,
+        [PhonemeStatus.IMMATURE]: 0,
+        [PhonemeStatus.DISTORTED]: 0,
+        [PhonemeStatus.ABSENT]: 0,
         all: 0
       }
-      if (!isNumber(resultsPerPhoneme[phoneme][status])) {
-        throw new Error(`Invalid status: ${status}`)
+      if (typeof phonemeResult === 'number') { // TODO implement phonological processes
+        if (!isNumber(resultsPerPhoneme[phoneme][phonemeResult])) {
+          throw new Error(`Invalid status: ${phonemeResult}`)
+        }
+        resultsPerPhoneme[phoneme][phonemeResult] += 1
       }
-      resultsPerPhoneme[phoneme][status] += 1
       resultsPerPhoneme[phoneme].all += 1
     })
   })
@@ -86,20 +90,20 @@ export const nonConstantConsonantsCount = (results: Results) => {
   const resultsPerPhoneme = calculateStatusResultsPerPhoneme(results)
   return Object.entries(resultsPerPhoneme).filter(
     ([phoneme, statusesWithCount]) =>
-      isConsonant(phoneme) && statusesWithCount.OK > 0 && statusesWithCount.OK < statusesWithCount.all
+      isConsonant(phoneme) && statusesWithCount[PhonemeStatus.OK] > 0 && statusesWithCount[PhonemeStatus.OK] < statusesWithCount.all
   ).length
 }
 
-export const consonantsWithStatus = (results: Results, status: string) => {
+export const consonantsWithStatus = (results: Results, status: PhonemeStatus) => {
   const resultsPerPhoneme = calculateStatusResultsPerPhoneme(results)
   return Object.entries(resultsPerPhoneme).filter(
     ([phoneme, statusesWithCount]) =>
       isConsonant(phoneme) && statusesWithCount[status] > 0
   ).map(([phoneme]) => phoneme)
 }
-export const consonantsWithStatusCount = (results: Results, status: string) => consonantsWithStatus(results, status).length
+export const consonantsWithStatusCount = (results: Results, status: PhonemeStatus) => consonantsWithStatus(results, status).length
 
-export const vocalsWithStatusCount = (results: Results, status: string) => {
+export const vocalsWithStatusCount = (results: Results, status: PhonemeStatus) => {
   const resultsPerPhoneme = calculateStatusResultsPerPhoneme(results)
   return Object.entries(resultsPerPhoneme).filter(
     ([phoneme, statusesWithCount]) =>
@@ -107,7 +111,7 @@ export const vocalsWithStatusCount = (results: Results, status: string) => {
   ).length
 }
 
-export const diphthongsWithStatusCount = (results: Results, status: string) => {
+export const diphthongsWithStatusCount = (results: Results, status: PhonemeStatus) => {
   const resultsPerPhoneme = calculateStatusResultsPerPhoneme(results)
   return Object.entries(resultsPerPhoneme).filter(
     ([phoneme, statusesWithCount]) =>

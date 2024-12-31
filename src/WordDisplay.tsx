@@ -2,17 +2,24 @@ import React, {useEffect, useState} from 'react'
 
 import PhonemeBox from './PhonemeBox.tsx'
 import {Word} from './phonemes.ts'
+import {PhonemeResult, PhonemeStatus} from './results.ts'
 
 type WordDisplayProps = {
   word: Word
-  results: string[]
-  updateResultsInLocalStorage: (results: string[]) => void
+  results: PhonemeResult[]
+  updateResultsInLocalStorage: (results: PhonemeResult[]) => void
   onNextWord: () => void
   boxSize: number
 }
 
-const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsInLocalStorage, onNextWord: onNextWordOuter, boxSize}) => {
-  const [currentResults, setCurrentResults] = useState<string[]>(results)
+const WordDisplay: React.FC<WordDisplayProps> = ({
+  word,
+  results,
+  updateResultsInLocalStorage,
+  onNextWord: onNextWordOuter,
+  boxSize
+}) => {
+  const [currentResults, setCurrentResults] = useState<PhonemeResult[]>(results)
   const [nextButtonDisabled, setNextButtonDisabled] = useState<boolean>(false)
 
   const onNextWord = () => {
@@ -25,19 +32,19 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
     setCurrentResults(results)
   }, [results])
 
-  const updateResults = (newResults: string[]) => {
+  const updateResults = (newResults: PhonemeResult[]) => {
     setCurrentResults(newResults)
     updateResultsInLocalStorage(newResults)
   }
 
-  const handlePhonemeUpdate = (index: number, status: string) => {
+  const handlePhonemeUpdate = (index: number, phonemeResult: PhonemeResult) => {
     const newResults = [...currentResults]
-    newResults[index] = status
+    newResults[index] = phonemeResult
     updateResults(newResults)
   }
 
   const handleOKClick = () => {
-    updateResults(Array.from({length: word.phonemes.length}, () => 'OK'))
+    updateResults(Array.from({length: word.phonemes.length}, () => PhonemeStatus.OK))
     setNextButtonDisabled(true)
     setTimeout(onNextWord, 1000)
   }
@@ -45,9 +52,9 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
   const handleContinueClick = () => {
     let somethingChanged = false
     updateResults(currentResults.map((result) => {
-      if (result === '') {
+      if (result === null) {
         somethingChanged = true
-        return 'OK'
+        return PhonemeStatus.OK
       } else {
         return result
       }
@@ -63,8 +70,8 @@ const WordDisplay: React.FC<WordDisplayProps> = ({word, results, updateResultsIn
           <PhonemeBox
             key={`${word.raw}-${index}`}
             phoneme={phoneme}
-            status={currentResults?.[index]}
-            onStatusUpdate={(status) => handlePhonemeUpdate(index, status)}
+            phonemeResult={currentResults?.[index]}
+            onResultUpdate={(phonemeResult) => handlePhonemeUpdate(index, phonemeResult)}
             boxSize={boxSize}
           />
         ))}

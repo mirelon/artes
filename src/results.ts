@@ -12,10 +12,19 @@ import {
   Word
 } from './phonemes'
 
-export type Results = { [raw: string]: string[] }
+export enum PhonemeStatus {
+  OK = 0,
+  IMMATURE = 1,
+  DISTORTED = 2,
+  ABSENT = 3,
+}
+
+export type PhonemeResult = PhonemeStatus | string | null
+
+export type Results = { [raw: string]: PhonemeResult[] }
 
 export const initialResult = (word: Word) =>
-  Array.from({length: word.phonemes.length}, () => '') // Initialize with empty strings
+  Array.from({length: word.phonemes.length}, () => null) // Initialize with nulls
 
 export const initialResults = (words: Word[]) =>
   Object.fromEntries(words.map(word => [word, initialResult(word)]))
@@ -28,24 +37,24 @@ export const totalDiphthongsCount = (results: Results) => sum(Object.keys(result
 
 export const totalPhonemesCount = (results: Results) => sum(Object.keys(results).map(phonemesCount))
 
-export const assertSameLength = (statuses: string[], word: Word) => {
-  if (statuses.length != word.phonemes.length) throw new Error(`Result statuses length does not match the phoneme count for ${word.raw}: ${statuses.length} != ${word.phonemes.length}`)
+export const assertSameLength = (phonemeResults: PhonemeResult[], word: Word) => {
+  if (phonemeResults.length != word.phonemes.length) throw new Error(`phonemeResults length does not match the phoneme count for ${word.raw}: ${phonemeResults.length} != ${word.phonemes.length}`)
 }
 
 export const correctConsonantsCount = (results: Results) => sum(Object.entries(results).map(([raw, statuses]) => {
   const word = toWord(raw)
   assertSameLength(statuses, word)
-  return limitedZip(word.phonemes, statuses).filter(([phoneme, status]) => isConsonant(phoneme) && status === 'OK').length
+  return limitedZip(word.phonemes, statuses).filter(([phoneme, status]) => isConsonant(phoneme) && status === PhonemeStatus.OK).length
 }))
 
 export const correctVocalsCount = (results: Results) => sum(Object.entries(results).map(([raw, statuses]) => {
   const word = toWord(raw)
   assertSameLength(statuses, word)
-  return limitedZip(word.phonemes, statuses).filter(([phoneme, status]) => isVocal(phoneme) && status === 'OK').length
+  return limitedZip(word.phonemes, statuses).filter(([phoneme, status]) => isVocal(phoneme) && status === PhonemeStatus.OK).length
 }))
 
 export const correctPhonemesCount = (results: Results) => sum(Object.entries(results).map(([raw, statuses]) => {
   const word = toWord(raw)
   assertSameLength(statuses, word)
-  return limitedZip(word.phonemes, statuses).filter(([_phoneme, status]) => status === 'OK').length
+  return limitedZip(word.phonemes, statuses).filter(([_phoneme, status]) => status === PhonemeStatus.OK).length
 }))

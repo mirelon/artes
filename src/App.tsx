@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import './App.css'
 import {fetchWordList} from './helpers.ts'
 import {Word} from './phonemes.ts'
-import {initialResult, initialResults, Results} from './results.ts'
+import {initialResult, initialResults, PhonemeResult, Results} from './results.ts'
 import ResultsDisplay from './ResultsDisplay.tsx'
 import WordDisplay from './WordDisplay.tsx'
 
@@ -67,7 +67,7 @@ const App: React.FC = () => {
   const currentWord = words[currentWordIndex] || []
   const boxSize = 0.6 * window.innerWidth / maxWordLength
 
-  const updateResultsInLocalStorage = (word: Word) => (wordResults: string[]) => {
+  const updateResultsInLocalStorage = (word: Word) => (wordResults: PhonemeResult[]) => {
     const newResults = {...results, [word.raw]: wordResults}
     setResults(newResults)
     localStorage.setItem('speechResults', JSON.stringify(newResults))

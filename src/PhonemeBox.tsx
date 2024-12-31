@@ -1,29 +1,37 @@
 import React, {useRef, useState} from 'react'
 
-import {Phoneme} from "./phonemes.ts";
+import {Phoneme} from './phonemes.ts'
+import {PhonemeResult, PhonemeStatus} from './results.ts'
+
 
 type PhonemeBoxProps = {
   phoneme: Phoneme
-  status: string
-  onStatusUpdate: (status: string) => void
+  phonemeResult: PhonemeResult
+  onResultUpdate: (phonemeResult: PhonemeResult) => void
   boxSize: number
 }
 
-const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate, boxSize}) => {
+const phonemeStatusButtonLabels: [PhonemeStatus, string][] = [
+  [PhonemeStatus.IMMATURE, 'NZ'],
+  [PhonemeStatus.DISTORTED, 'D'],
+  [PhonemeStatus.ABSENT, 'A'],
+]
+
+const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResultUpdate, boxSize}) => {
 
   const [isEditing, setIsEditing] = useState(false)
   const [currentPhoneme, setCurrentPhoneme] = useState(phoneme)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const getColor = (status: string) => {
-    switch (status) {
-      case "OK":
+  const getColor = (phonemeResult: PhonemeResult) => {
+    switch (phonemeResult) {
+      case PhonemeStatus.OK:
         return {background: "#28a745", buttonColor: "#b8e5b3"}
-      case "NZ":
+      case PhonemeStatus.IMMATURE:
         return {background: "#ffc107", buttonColor: "#ffe5a1"}
-      case "D":
+      case PhonemeStatus.DISTORTED:
         return {background: "#fd7e14", buttonColor: "#f9c6a1"}
-      case "A":
+      case PhonemeStatus.ABSENT:
         return {background: "#6c757d", buttonColor: "#d6d8db"}
       default:
         return {background: "#d4edda", buttonColor: "#d4edda"}
@@ -51,7 +59,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate,
     setIsEditing(false)
   }
 
-  const colors = getColor(status)
+  const colors = getColor(phonemeResult)
 
   return (
     <div className="phoneme-box-container">
@@ -75,10 +83,10 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, status, onStatusUpdate,
         )}
       </div>
       <div className="phoneme-status-buttons">
-        {['NZ', 'D', 'A'].map((label) => (
+        {phonemeStatusButtonLabels.map(([phonemeStatus, label]) => (
           <button
             key={label}
-            onClick={() => onStatusUpdate(label)}
+            onClick={() => onResultUpdate(phonemeStatus)}
             style={{
               backgroundColor: colors.buttonColor,
               width: boxSize,

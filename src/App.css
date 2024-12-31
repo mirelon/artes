@@ -78,7 +78,7 @@ html, body {
 
 .phoneme-status-buttons button {
     color: #000000; /* Black text color for buttons */
-    padding: 0.5em 0em;
+    padding: 0.5em 0;
     font-weight: bold; /* Optional: make text bold */
     text-align: center;
 }

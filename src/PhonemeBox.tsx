@@ -86,7 +86,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
         {phonemeStatusButtonLabels.map(([phonemeStatus, label]) => (
           <button
             key={label}
-            onClick={() => onResultUpdate(phonemeStatus)}
+            onClick={() => phonemeResult === phonemeStatus ? onResultUpdate(null) : onResultUpdate(phonemeStatus)}
             style={{
               backgroundColor: colors.buttonColor,
               width: boxSize,

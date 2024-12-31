@@ -76,10 +76,12 @@ const WordDisplay: React.FC<WordDisplayProps> = ({
           />
         ))}
       </div>
-      {currentResults?.some(result => result)
-        ? <button onClick={handleContinueClick} disabled={nextButtonDisabled}>Continue</button>
-        : <button onClick={handleOKClick} disabled={nextButtonDisabled}>OK</button>
-      }
+      <div className="button-container">
+        {currentResults?.some(result => result)
+          ? <button onClick={handleContinueClick} disabled={nextButtonDisabled}>Continue</button>
+          : <button onClick={handleOKClick} disabled={nextButtonDisabled}>OK</button>
+        }
+      </div>
     </div>
   )
 }

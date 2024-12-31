@@ -83,6 +83,12 @@ html, body {
     text-align: center;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 button {
     padding: 0.5em 1em;
     background-color: aqua;

@@ -59,6 +59,10 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
   }
 
   const handleBlur = () => {
+    if (inputRef.current?.value === '') {
+      inputRef.current.value = phoneme
+      onResultUpdate(PhonemeStatus.ABSENT)
+    }
     setIsEditing(false)
   }
 

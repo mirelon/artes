@@ -35,7 +35,7 @@ interface ResultsDisplayProps {
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({results}) => {
   return (
     <div className="results">
-      <h2>Results</h2>
+      <h2>Výsledky</h2>
       <table>
         <thead>
         <tr>

@@ -2,9 +2,10 @@ import React, {useCallback, useEffect, useState} from 'react'
 import './App.css'
 import {useSwipeable} from 'react-swipeable'
 
+import {AppState, initialAppState} from './appState.ts'
 import {fetchWordList} from './helpers.ts'
 import {Word} from './phonemes.ts'
-import {initialResult, initialResults, PhonemeResult, Results} from './results.ts'
+import {initialResult, PhonemeResult} from './results.ts'
 import ResultsDisplay from './ResultsDisplay.tsx'
 import WordDisplay from './WordDisplay.tsx'
 
@@ -14,7 +15,7 @@ const App: React.FC = () => {
   const [errorLoadingWords, setErrorLoadingWords] = useState<string | null>(null)
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [maxWordLength, setMaxWordLength] = useState(1)
-  const [results, setResults] = useState<Results>({})
+  const [appState, setAppState] = useState<AppState | null>(null)
   const [showResults, setShowResults] = useState(false)
 
   const cycleNextWord = useCallback(() => {
@@ -51,12 +52,15 @@ const App: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    try {
-      setResults(JSON.parse(localStorage.getItem('speechResults') ?? '{}'))
-    } catch {
-      setResults(initialResults(words))
-      localStorage.setItem('speechResults', JSON.stringify(initialResults))
+    const storedState = localStorage.getItem('artesAppState')
+    if (storedState) {
+      try {
+        return setAppState(JSON.parse(storedState))
+      } catch { /* Continue with initialization of app state */ }
     }
+    const appState = initialAppState(words)
+    setAppState(appState)
+    localStorage.setItem('artesAppState', JSON.stringify(appState))
   }, [words])
 
   // Handle arrow keys and Escape
@@ -78,10 +82,17 @@ const App: React.FC = () => {
   const currentWord = words[currentWordIndex] || []
   const boxSize = 0.6 * window.innerWidth / maxWordLength
 
-  const updateResultsInLocalStorage = (word: Word) => (wordResults: PhonemeResult[]) => {
+  const updateResultsInLocalStorage = (appState: AppState, word: Word) => (wordResults: PhonemeResult[]) => {
+    const {children, currentChildId} = appState
+    const childProfile = children[currentChildId]!
+    const results = childProfile.results
     const newResults = {...results, [word.raw]: wordResults}
-    setResults(newResults)
-    localStorage.setItem('speechResults', JSON.stringify(newResults))
+    const newAppState: AppState = {
+      ...appState,
+      children: {...children, [currentChildId]: {...childProfile, results: newResults}},
+    }
+    setAppState(newAppState)
+    localStorage.setItem('artesAppState', JSON.stringify(newAppState))
   }
 
   const handlers = useSwipeable({
@@ -96,16 +107,26 @@ const App: React.FC = () => {
         <div>Loading words...</div>
       ) : errorLoadingWords ? (
         <div>Error: {errorLoadingWords}</div>
-      ) : showResults ? (
-        <ResultsDisplay results={results}/>
+      ) : !appState ? (
+        <div>Words are loaded, but App is not initialized</div>
       ) : (
-        <WordDisplay
-          word={currentWord}
-          results={results[currentWord.raw] ?? initialResult(currentWord)}
-          updateResultsInLocalStorage={updateResultsInLocalStorage(currentWord)}
-          onNextWord={handleNextWord}
-          boxSize={boxSize}
-        />
+        (() => {
+          const child = appState.children[appState.currentChildId]
+          if (!child) return <div>No child selected</div>
+
+          const childResults = child.results ?? {}
+          return showResults ? (
+            <ResultsDisplay results={childResults} />
+          ) : (
+            <WordDisplay
+              word={currentWord}
+              results={childResults[currentWord.raw] ?? initialResult(currentWord)}
+              updateResultsInLocalStorage={updateResultsInLocalStorage(appState, currentWord)}
+              onNextWord={handleNextWord}
+              boxSize={boxSize}
+            />
+          )
+        })()
       )}
     </div>
   )

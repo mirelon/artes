@@ -115,3 +115,37 @@ button {
 .results span.variable-label {
     font-weight: bold;
 }
+
+/* Child profile, edit details */
+
+.child-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.child-info:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.child-name,
+.child-gender,
+.child-birth {
+    font-size: 16px;
+}
+
+.edit-icon {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+    color: gray;
+    transition: color 0.2s ease-in-out;
+}
+
+.child-info:hover .edit-icon {
+    color: black;
+}

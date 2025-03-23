@@ -3,7 +3,7 @@ import {initialResults, Results} from './results'
 
 export type ChildProfile = {
   results: Results
-  birth?: Date
+  birth?: string // Stored as "DD.MM.YYYY"
   gender?: 'M' | 'F'
   name?: string
 }
@@ -30,3 +30,17 @@ export const addChild = (children: Record<string, ChildProfile>, words: Word[]):
 }
 
 export const initialAppState = (words: Word[]) => addChild({}, words)
+
+export const displayGender = (gender?: 'M' | 'F') => gender && { M: '♂', F: '♀' }[gender]
+
+export const parseDate = (dateStr: string): Date | null => {
+  const parts = dateStr.split('.').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return null
+
+  const [day, month, year] = parts
+  const date = new Date(year, month - 1, day)
+
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null
+}
+
+export const isValidDate = (dateStr: string): boolean => parseDate(dateStr) !== null

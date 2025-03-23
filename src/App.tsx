@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react'
 import './App.css'
 import {useSwipeable} from 'react-swipeable'
 
-import {AppState, initialAppState} from './appState.ts'
+import {AppState, ChildProfile, initialAppState} from './appState.ts'
 import ChildDisplay from './ChildDisplay.tsx'
 import {fetchWordList} from './helpers.ts'
 import {Word} from './phonemes.ts'
@@ -82,17 +82,20 @@ const App: React.FC = () => {
   const currentWord = words[currentWordIndex] || []
   const boxSize = 0.6 * window.innerWidth / maxWordLength
 
-  const updateResultsInLocalStorage = (appState: AppState, word: Word) => (wordResults: PhonemeResult[]) => {
+  const updateChildInLocalStorage = (appState: AppState) => (updates: Partial<ChildProfile>) => {
     const {children, currentChildId} = appState
     const childProfile = children[currentChildId]!
-    const results = childProfile.results
-    const newResults = {...results, [word.raw]: wordResults}
-    const newAppState: AppState = {
+    const newAppState = {
       ...appState,
-      children: {...children, [currentChildId]: {...childProfile, results: newResults}},
+      children: {...children, [currentChildId]: {...childProfile, ...updates}}
     }
     setAppState(newAppState)
     localStorage.setItem('artesAppState', JSON.stringify(newAppState))
+  }
+
+  const updateResultsInLocalStorage = (appState: AppState, word: Word) => (wordResults: PhonemeResult[]) => {
+    const childProfile = appState.children[appState.currentChildId]!
+    updateChildInLocalStorage(appState)({results: {...(childProfile.results), [word.raw]: wordResults}})
   }
 
   const handlers = useSwipeable({
@@ -111,12 +114,15 @@ const App: React.FC = () => {
         <div>Words are loaded, but App is not initialized</div>
       ) : (
         (() => {
-          const child = appState.children[appState.currentChildId]
-          if (!child) return <div>No child selected</div>
+          const childProfile = appState.children[appState.currentChildId]
+          if (!childProfile) return <div>No child selected</div>
 
-          const childResults = child.results ?? {}
+          const childResults = childProfile.results ?? {}
           return showResults ? (
-            <ChildDisplay results={childResults} />
+            <ChildDisplay
+              childProfile={childProfile}
+              updateChild={updateChildInLocalStorage(appState)}
+            />
           ) : (
             <WordDisplay
               word={currentWord}

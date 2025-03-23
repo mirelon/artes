@@ -3,10 +3,10 @@ import './App.css'
 import {useSwipeable} from 'react-swipeable'
 
 import {AppState, initialAppState} from './appState.ts'
+import ChildDisplay from './ChildDisplay.tsx'
 import {fetchWordList} from './helpers.ts'
 import {Word} from './phonemes.ts'
 import {initialResult, PhonemeResult} from './results.ts'
-import ResultsDisplay from './ResultsDisplay.tsx'
 import WordDisplay from './WordDisplay.tsx'
 
 const App: React.FC = () => {
@@ -116,7 +116,7 @@ const App: React.FC = () => {
 
           const childResults = child.results ?? {}
           return showResults ? (
-            <ResultsDisplay results={childResults} />
+            <ChildDisplay results={childResults} />
           ) : (
             <WordDisplay
               word={currentWord}

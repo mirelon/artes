@@ -28,11 +28,11 @@ const phonemeStatusLabels = {
   [PhonemeStatus.ABSENT]: 'A',
 }
 
-interface ResultsDisplayProps {
+interface ChildDisplayProps {
   results: Results
 }
 
-const ResultsDisplay: React.FC<ResultsDisplayProps> = ({results}) => {
+const ChildDisplay: React.FC<ChildDisplayProps> = ({results}) => {
   return (
     <div className="results">
       <h2>Výsledky</h2>
@@ -127,4 +127,4 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({results}) => {
   )
 }
 
-export default ResultsDisplay
+export default ChildDisplay

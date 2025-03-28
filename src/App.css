@@ -86,11 +86,27 @@ html, body {
 .button-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
+    gap: 20px;
 }
 
-button {
+.button-container * {
+    border-radius: 8px;
     padding: 0.5em 1em;
+    cursor: pointer;
+}
+
+
+.button-container .children-icon:hover {
+    color: orange;
+}
+
+.button-container .chart-icon:hover {
+    color: saddlebrown;
+}
+
+.button-container .continue-icon {
     background-color: aqua;
 }
 
@@ -116,7 +132,7 @@ button {
     font-weight: bold;
 }
 
-/* Child profile, edit details */
+/* Child profile / children list, edit details */
 
 .child-info {
     display: flex;
@@ -132,20 +148,72 @@ button {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.child-form {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.child-form button, .save-icon {
+    background-color: greenyellow;
+}
+
 .child-name,
 .child-gender,
 .child-birth {
     font-size: 16px;
 }
 
-.edit-icon {
-    margin-left: auto;
+.play-icon, .edit-icon, .profile-icon, .children-icon, .chart-icon, .delete-icon, .add-icon {
+    cursor: pointer;
     width: 20px;
     height: 20px;
     color: gray;
     transition: color 0.2s ease-in-out;
 }
 
+.play-icon:hover, .edit-icon:hover, .profile-icon:hover, .add-icon:hover {
+    color: blue;
+}
+
+.profile-icon:hover {
+    color: saddlebrown;
+}
+
+.delete-icon:hover {
+    color: red;
+}
+
 .child-info:hover .edit-icon {
     color: black;
+}
+
+.children-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.child-container {
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+.child-container:hover, .add-child:hover {
+    background: #f0f0f0;
+}
+.selected {
+    border: 2px solid blue;
+}
+
+.add-child {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
 }

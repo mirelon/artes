@@ -1,7 +1,9 @@
+import {ChartColumn, CheckCircle, Users} from 'lucide-react'
 import React, {useCallback, useEffect, useState} from 'react'
 import {useSwipeable} from "react-swipeable";
 
 import {AppState, ChildProfile} from './appState.ts';
+import {Page} from './pages.ts';
 import PhonemeBox from './PhonemeBox.tsx'
 import {Word} from './phonemes.ts'
 import {initialResult, PhonemeResult, PhonemeStatus} from './results.ts'
@@ -11,7 +13,7 @@ type WordDisplayProps = {
   appState: AppState
   updateChild: (updates: Partial<ChildProfile>) => void
   boxSize: number
-  setCurrentPage: (currentPage: 'wordDisplay' | 'childDisplay') => void
+  setCurrentPage: (currentPage: Page) => void
 }
 
 const WordDisplay: React.FC<WordDisplayProps> = ({
@@ -85,12 +87,6 @@ const WordDisplay: React.FC<WordDisplayProps> = ({
     updateResults(newResults)
   }
 
-  const handleOKClick = () => {
-    updateResults(Array.from({length: currentWord.phonemes.length}, () => PhonemeStatus.OK))
-    setNextButtonDisabled(true)
-    setTimeout(onNextWord, 1000)
-  }
-
   const handleContinueClick = () => {
     let somethingChanged = false
     updateResults(currentResults.map((result) => {
@@ -125,10 +121,12 @@ const WordDisplay: React.FC<WordDisplayProps> = ({
         ))}
       </div>
       <div className="button-container">
-        {currentResults?.some(result => result)
-          ? <button onClick={handleContinueClick} disabled={nextButtonDisabled}>Continue</button>
-          : <button onClick={handleOKClick} disabled={nextButtonDisabled}>OK</button>
-        }
+        <Users className="children-icon" onClick={(e) => { e.stopPropagation(); setCurrentPage('childrenList') }} />
+        <ChartColumn className="chart-icon" onClick={(e) => { e.stopPropagation(); setCurrentPage('childDisplay') }} />
+        <CheckCircle onClick={() => {
+          if (nextButtonDisabled) return
+          handleContinueClick()
+        }} className={`continue-icon ${nextButtonDisabled ? 'disabled' : ''}`}/>
       </div>
     </div>
   )

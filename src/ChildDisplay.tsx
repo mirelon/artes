@@ -1,5 +1,5 @@
 import { Pencil } from 'lucide-react'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import {ChildProfile, displayGender, isValidDate} from './appState.ts'
 import {formatPercentage} from './helpers.ts'
@@ -32,9 +32,10 @@ const phonemeStatusLabels = {
 interface ChildDisplayProps {
   childProfile: ChildProfile
   updateChild: (updates: Partial<ChildProfile>) => void
+  setCurrentPage: (currentPage: 'wordDisplay' | 'childDisplay') => void
 }
 
-const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild }) => {
+const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild, setCurrentPage }) => {
   const { name, birth, gender, results } = childProfile
 
   const [editing, setEditing] = useState(!name || !birth || !gender)
@@ -54,6 +55,17 @@ const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild }
     updateChild({...formData, gender: formData.gender || undefined})
     setEditing(false)
   }
+
+  // Handle Escape
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setCurrentPage('wordDisplay')
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [setCurrentPage])
 
   return (
     <div>

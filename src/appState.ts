@@ -22,7 +22,7 @@ export const addChild = (children: Record<string, ChildProfile>, words: Word[]):
   const updatedChildren = { ...children, [newChildId]: newChild }
   const updatedAppState: AppState = {
     children: updatedChildren,
-    currentChildId: newChildId,
+    currentChildId: newChildId
   }
 
   localStorage.setItem('artesAppState', JSON.stringify(updatedAppState))

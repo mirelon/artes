@@ -27,7 +27,7 @@ export const initialResult = (word: Word) =>
   Array.from({length: word.phonemes.length}, () => null) // Initialize with nulls
 
 export const initialResults = (words: Word[]) =>
-  Object.fromEntries(words.map(word => [word, initialResult(word)]))
+  Object.fromEntries(words.map(word => [word.raw, initialResult(word)]))
 
 export const totalConsonantsCount = (results: Results) => sum(Object.keys(results).map(consonantsCount))
 

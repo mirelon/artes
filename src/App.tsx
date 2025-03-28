@@ -2,8 +2,10 @@ import React, {useEffect, useState} from 'react'
 import './App.css'
 
 import {AppState, ChildProfile, initialAppState} from './appState.ts'
+import ChildrenList from './ChidrenList.tsx'
 import ChildDisplay from './ChildDisplay.tsx'
 import {fetchWordList} from './helpers.ts'
+import {Page} from './pages.ts'
 import {Word} from './phonemes.ts'
 import WordDisplay from './WordDisplay.tsx'
 
@@ -13,7 +15,7 @@ const App: React.FC = () => {
   const [errorLoadingWords, setErrorLoadingWords] = useState<string | null>(null)
   const [maxWordLength, setMaxWordLength] = useState(1)
   const [appState, setAppState] = useState<AppState | null>(null)
-  const [currentPage, setCurrentPage] = useState<'wordDisplay' | 'childDisplay'>('wordDisplay')
+  const [currentPage, setCurrentPage] = useState<Page>('childrenList')
 
   // Fetch the words on initial load
   useEffect(() => {
@@ -80,14 +82,25 @@ const App: React.FC = () => {
               />
             )
           }
+          if (currentPage === 'wordDisplay') {
+            return (
+              <WordDisplay
+                words={words}
+                appState={appState}
+                updateChild={updateChildInLocalStorage(appState)}
+                boxSize={boxSize}
+                setCurrentPage={setCurrentPage}
+              />
+            )
+          }
           return (
-            <WordDisplay
-              words={words}
+            <ChildrenList
               appState={appState}
-              updateChild={updateChildInLocalStorage(appState)}
-              boxSize={boxSize}
+              setAppState={setAppState}
+              words={words}
               setCurrentPage={setCurrentPage}
-            />
+              updateChild={updateChildInLocalStorage(appState)}
+              />
           )
         })()
       )}

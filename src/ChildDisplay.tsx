@@ -147,7 +147,7 @@ const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild, 
                 title="Správne vyslovené vokály / cieľové vokály">SVV</span>: {totalVocalsCount(results) > 0 ? formatPercentage(correctVocalsCount(results) / totalVocalsCount(results)) : '-'}
           <br/>
           <span className="variable-label"
-                title="Správne vyslovené fonémy / cieľové fonémy">SVF</span>: {totalPhonemesCount(results) > 0 ? formatPercentage(correctPhonemesCount(results) / totalPhonemesCount(results)) : '-'}
+                title="Správne realizované fonémy / cieľové fonémy">SRF</span>: {totalPhonemesCount(results) > 0 ? formatPercentage(correctPhonemesCount(results) / totalPhonemesCount(results)) : '-'}
           <br/>
 
           <h3>Fonetický repertoár</h3>

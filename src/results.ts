@@ -53,8 +53,10 @@ export const correctVocalsCount = (results: Results) => sum(Object.entries(resul
   return limitedZip(word.phonemes, statuses).filter(([phoneme, status]) => isVocal(phoneme) && status === PhonemeStatus.OK).length
 }))
 
+const correctPhonemeStatuses: PhonemeResult[] = [PhonemeStatus.OK, PhonemeStatus.DISTORTED, PhonemeStatus.IMMATURE]
+
 export const correctPhonemesCount = (results: Results) => sum(Object.entries(results).map(([raw, statuses]) => {
   const word = toWord(raw)
   assertSameLength(statuses, word)
-  return limitedZip(word.phonemes, statuses).filter(([_phoneme, status]) => status === PhonemeStatus.OK).length
+  return limitedZip(word.phonemes, statuses).filter(([_phoneme, status]) => correctPhonemeStatuses.includes(status)).length
 }))

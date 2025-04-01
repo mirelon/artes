@@ -18,20 +18,12 @@ const phonemeStatusButtonLabels: [PhonemeStatus, string][] = [
 ]
 
 const getColor = (phonemeResult: PhonemeResult) => {
-  switch (phonemeResult) {
-    case PhonemeStatus.OK:
-      return {background: "#28a745", buttonColor: "#b8e5b3"}
-    case PhonemeStatus.IMMATURE:
-      return {background: "#ffc107", buttonColor: "#ffe5a1"}
-    case PhonemeStatus.DISTORTED:
-      return {background: "#fd7e14", buttonColor: "#f9c6a1"}
-    case PhonemeStatus.ABSENT:
-      return {background: "#6c757d", buttonColor: "#d6d8db"}
-    case null:
-      return {background: "#d4edda", buttonColor: "#d4edda"}
-    default:
-      return {background: "#ba68c8", buttonColor: "#e1bee7"}
-  }
+  if (phonemeResult === PhonemeStatus.OK) return {background: "#28a745", buttonColor: "#b8e5b3"}
+  if (phonemeResult === PhonemeStatus.IMMATURE || (typeof phonemeResult === 'string' && phonemeResult.endsWith(PhonemeStatus.IMMATURE.toString()))) return {background: "#ffc107", buttonColor: "#ffe5a1"}
+  if (phonemeResult === PhonemeStatus.DISTORTED || (typeof phonemeResult === 'string' && phonemeResult.endsWith(PhonemeStatus.DISTORTED.toString()))) return {background: "#fd7e14", buttonColor: "#f9c6a1"}
+  if (phonemeResult === PhonemeStatus.ABSENT) return {background: "#6c757d", buttonColor: "#d6d8db"}
+  if (phonemeResult == null) return {background: "#d4edda", buttonColor: "#d4edda"}
+  return {background: "#ba68c8", buttonColor: "#e1bee7"}
 }
 
 const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResultUpdate, boxSize}) => {
@@ -39,7 +31,11 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
   const [isEditing, setIsEditing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const displayedPhoneme = typeof phonemeResult === 'string' ? phonemeResult : phoneme
+  const displayedPhoneme = typeof phonemeResult === 'string'
+    ? phonemeResult.length > 0 && [PhonemeStatus.DISTORTED, PhonemeStatus.IMMATURE].map(s => s.toString()).includes(phonemeResult.slice(-1))
+      ? phonemeResult.slice(0, -1)
+      : phonemeResult
+    : phoneme
 
   const handleBoxClick = () => {
     setIsEditing(true)
@@ -98,7 +94,15 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
         {phonemeStatusButtonLabels.map(([phonemeStatus, label]) => (
           <button
             key={label}
-            onClick={() => phonemeResult === phonemeStatus ? onResultUpdate(null) : onResultUpdate(phonemeStatus)}
+            onClick={() => phonemeResult === phonemeStatus
+              ? onResultUpdate(null) // Remove status for unchanged phoneme
+              : typeof phonemeResult === 'string' && phonemeResult.length > 0 && [PhonemeStatus.DISTORTED, PhonemeStatus.IMMATURE].includes(phonemeStatus)
+                ? [PhonemeStatus.DISTORTED, PhonemeStatus.IMMATURE].map(s => s.toString()).includes(phonemeResult.slice(-1))
+                  ? phonemeResult[-1] === phonemeStatus.toString()
+                    ? onResultUpdate(phonemeResult.slice(0, -1)) // Remove status from changed phoneme
+                    : onResultUpdate(`${phonemeResult.slice(0, -1)}${phonemeStatus}`) // Change status of changed phoneme
+                  : onResultUpdate(`${phonemeResult}${phonemeStatus}`) // Add status for changed phoneme
+                : onResultUpdate(phonemeStatus)} // Change status for unchanged phoneme
             style={{
               backgroundColor: colors.buttonColor,
               width: boxSize,

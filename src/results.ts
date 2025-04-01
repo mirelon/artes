@@ -19,6 +19,8 @@ export enum PhonemeStatus {
   ABSENT = 3,
 }
 
+// If the phoneme is changed, it's of type string
+// If the phoneme is changed and immature / distorted, the status appended as the last character of string
 export type PhonemeResult = PhonemeStatus | string | null
 
 export type Results = { [raw: string]: PhonemeResult[] }

@@ -21,6 +21,7 @@ html, body {
     justify-content: center; /* Centers content horizontally */
     height: 100vh; /* Full viewport height */
     background-color: #f9f9f9;
+    overflow: hidden;
 }
 
 /* Word container for aligning character boxes in a row */
@@ -110,6 +111,13 @@ html, body {
     background-color: aqua;
 }
 
+.results {
+    flex-grow: 1; /* Takes available space */
+    overflow: auto; /* Allows scrolling */
+    max-height: 80vh; /* Prevents overflow from pushing content out */
+    width: 100%; /* Ensures it takes full width */
+}
+
 .results table {
     width: 100%;
     border-collapse: collapse;
@@ -142,6 +150,7 @@ html, body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+    flex-shrink: 0; /* Prevents shrinking */
 }
 
 .child-info:hover {

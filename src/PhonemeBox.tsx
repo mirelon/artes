@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react'
 
 import {Phoneme} from './phonemes.ts'
-import {PhonemeResult, PhonemeStatus} from './results.ts'
+import {isChangedAndIncorrect, PhonemeResult, PhonemeStatus} from './results.ts'
 
 
 type PhonemeBoxProps = {
@@ -32,7 +32,7 @@ const PhonemeBox: React.FC<PhonemeBoxProps> = ({phoneme, phonemeResult, onResult
   const inputRef = useRef<HTMLInputElement>(null)
 
   const displayedPhoneme = typeof phonemeResult === 'string'
-    ? phonemeResult.length > 0 && [PhonemeStatus.DISTORTED, PhonemeStatus.IMMATURE].map(s => s.toString()).includes(phonemeResult.slice(-1))
+    ? isChangedAndIncorrect(phonemeResult)
       ? phonemeResult.slice(0, -1)
       : phonemeResult
     : phoneme

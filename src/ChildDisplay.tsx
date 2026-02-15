@@ -21,6 +21,7 @@ import {
   totalPhonemesCount,
   totalVocalsCount
 } from './results.ts'
+import {Page} from './pages.ts'
 
 const phonemeStatusLabels = {
   [PhonemeStatus.OK]: 'OK',
@@ -32,7 +33,7 @@ const phonemeStatusLabels = {
 interface ChildDisplayProps {
   childProfile: ChildProfile
   updateChild: (updates: Partial<ChildProfile>) => void
-  setCurrentPage: (currentPage: 'wordDisplay' | 'childDisplay') => void
+  setCurrentPage: (currentPage: Page) => void
 }
 
 const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild, setCurrentPage }) => {
@@ -60,7 +61,7 @@ const ChildDisplay: React.FC<ChildDisplayProps> = ({ childProfile, updateChild, 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setCurrentPage('wordDisplay')
+        setCurrentPage('childrenList')
       }
     }
     window.addEventListener('keydown', handleKeyDown)

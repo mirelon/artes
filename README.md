@@ -1,50 +1,49 @@
-# React + TypeScript + Vite
+# Artes — Artikulačný test
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Webová aplikácia pre artikulačné (výslovnostné) testovanie detí. Umožňuje evidovať viacero detí, prechádzať slovník slov po fonémach a zapisovať výsledky (OK, nezrelé, distorzné, absentujúce alebo substitúcie). Výsledky sa ukladajú v prehliadači (localStorage) a aplikácia počíta sumárne štatistiky a fonetický repertoár.
 
-Currently, two official plugins are available:
+**Live:** [https://mirelon.github.io/artes/](https://mirelon.github.io/artes/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Funkcie
 
-## Expanding the ESLint configuration
+- **Profil dieťaťa** — meno, dátum narodenia (DD.MM.YYYY), pohlavie
+- **Zoznam detí** — pridávanie, výber, úprava a mazanie profilov
+- **Slová podľa foném** — slová z `words.txt` sa rozložia na fonémy so slovenskými pravidlami (diftongy, spodobovanie, mäkčenie)
+- **Záznam po fonémach** — pre každú fonému: OK, NZ (nezrelé), D (distorzné), A (absentujúce), alebo záznam substitúcie (čo dieťa skutočne povedalo)
+- **Výsledky** — suma cieľových/správnych konsonantov a vokálov, SRF/SVK/SVV, fonetický repertoár (konsonanty vo všetkých pozíciách, nekonštantné, nezrelé, distorzné, absentujúce)
+- **Navigácia** — šípky alebo swipe medzi slovami, Escape späť na zoznam/výsledky
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Technológie
 
-- Configure the top-level `parserOptions` property like this:
+- **React 19** + **TypeScript**
+- **Vite 6** (build, dev server)
+- **ESLint** (lint), **Vitest** (testy)
+- **gh-pages** — nasadenie na GitHub Pages
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Spustenie
+
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Otvorte [http://localhost:5173](http://localhost:5173).
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Štruktúra projektu
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- `src/App.tsx` — hlavná aplikácia, stav stránok a načítanie slov
+- `src/appState.ts` — typy a logika stavu (deti, aktuálne dieťa, localStorage)
+- `src/phonemes.ts` — rozklad slov na fonémy (slovenčina: diftongy, spodobovanie, mäkčenie)
+- `src/results.ts` — typy výsledkov (OK, IMMATURE, DISTORTED, ABSENT), počítanie správnych konsonantov/vokálov/foném
+- `src/positions.ts` — štatistiky podľa pozície (I/M/F) a fonetický repertoár
+- `src/helpers.ts` — načítanie `words.txt`, `limitedZip`, `formatPercentage`
+- `src/pages.ts` — typ stránok: `childrenList` | `childDisplay` | `wordDisplay`
+- `src/ChidrenList.tsx` — zoznam detí a pridávanie/úprava/mazanie
+- `src/ChildDisplay.tsx` — profil dieťaťa a tabuľka výsledkov
+- `src/WordDisplay.tsx` — zobrazenie slova po fonémach a navigácia
+- `src/PhonemeBox.tsx` — jeden box fonémy so stavom a tlačidlami NZ/D/A
+- `public/words.txt` — zoznam slov (jeden riadok = jedno slovo)
+
+## Dáta
+
+Stav aplikácie (`children`, `currentChildId`, výsledky) sa ukladá do `localStorage` pod kľúčom `artesAppState`. Slová sa načítavajú z `public/words.txt` pri štarte.
